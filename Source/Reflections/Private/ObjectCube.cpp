@@ -28,18 +28,29 @@ void AObjectCube::Tick(float DeltaTime)
 
 	if (!Mirror) return;
 
+	// Determine reflection location
 	FVector CubeLocation = GetActorLocation();
 	FVector MirrorLocation = Mirror->GetActorLocation();
 	FVector MirrorPlaneNormal = Mirror->GetActorForwardVector().GetSafeNormal();
 	FVector ReflectionLocation = (2 * MirrorLocation) - CubeLocation + (2 * MirrorPlaneNormal * FVector::DotProduct((CubeLocation - MirrorLocation), MirrorPlaneNormal));
+	ReflectionLocation.Z = CubeLocation.Z;
 
 	// TODO: Get reflected rotation
+	FRotator CubeRotation = GetActorRotation();
+	FRotator ReflectionRotation = FRotator(
+		CubeRotation.Pitch,
+		-CubeRotation.Yaw,
+		-CubeRotation.Roll
+	);
 
 	// Spawn reflection if it doesn't already exist
 	if (!Reflection) {
 		if (!ensure(ReflectionBlueprint)) return;
-		Reflection = GetWorld()->SpawnActor<AReflected_Cube>(ReflectionBlueprint, ReflectionLocation, FRotator(0,0,0));
+		Reflection = GetWorld()->SpawnActor<AReflected_Cube>(ReflectionBlueprint, ReflectionLocation, ReflectionRotation);
 	}
+
+	Reflection->SetActorLocation(ReflectionLocation);
+	Reflection->SetActorRotation(ReflectionRotation);
 
 }
 
