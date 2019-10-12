@@ -18,20 +18,6 @@ void AObjectCube::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("I'm in the world"));
-
-	FVector Location = FVector(0, 0, 0);
-
-	if (!ensure(Mirror)) return;
-	FVector MirrorDirection = Mirror->GetActorRightVector().GetSafeNormal();
-	FVector CubeDirection = GetActorForwardVector().GetSafeNormal();
-	FVector ReflectionVector = FVector(
-		MirrorDirection.X * CubeDirection.X * -1,
-		MirrorDirection.Y * CubeDirection.Y * -1,
-		MirrorDirection.Z * CubeDirection.Z * -1
-	);
-
-	if (!ensure(ReflectionBlueprint)) return;
-	Reflection = GetWorld()->SpawnActor<AReflected_Cube>(ReflectionBlueprint, Location, ReflectionVector.Rotation());
 	
 }
 
@@ -40,7 +26,24 @@ void AObjectCube::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!Mirror) return;
+
+	FVector CubeLocation = GetActorLocation();
+	FVector MirrorLocation = Mirror->GetActorLocation();
+	FVector MirrorPlaneNormal = Mirror->GetActorForwardVector().GetSafeNormal();
+	FVector ReflectionLocation = (2 * MirrorLocation) - CubeLocation + (2 * MirrorPlaneNormal * FVector::DotProduct((CubeLocation - MirrorLocation), MirrorPlaneNormal));
+
+	// TODO: Get reflected rotation
+
+	// Spawn reflection if it doesn't already exist
+	if (!Reflection) {
+		if (!ensure(ReflectionBlueprint)) return;
+		Reflection = GetWorld()->SpawnActor<AReflected_Cube>(ReflectionBlueprint, ReflectionLocation, FRotator(0,0,0));
+	}
+
 }
 
-void AObjectCube::Initialise(AMirror* MirrorToSet) {}
+void AObjectCube::Initialise(AMirror* MirrorToSet) {
+	Mirror = MirrorToSet;
+}
 
