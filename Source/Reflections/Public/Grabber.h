@@ -5,14 +5,13 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 
-#include "Components/InputComponent.h"
 #include "Components/PrimitiveComponent.h"
-#include "Engine/World.h"
-#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "DrawDebugHelpers.h"
 
 #include "Grabber.generated.h"
 
+class UInputComponent;
+class UPhysicsHandleComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class REFLECTIONS_API UGrabber : public UActorComponent
@@ -37,6 +36,8 @@ private:
     UPhysicsHandleComponent* PhysicsHandle = nullptr;
 
     UInputComponent* InputComponent = nullptr;
+
+    bool bHasInputComponent = false;
 
     void FindPhysicsHandleComponent();
     void SetupInputComponent();

@@ -3,6 +3,8 @@
 
 #include "Grabber.h"
 #include "Engine/World.h"
+#include "Components/InputComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -26,6 +28,10 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+    if (!bHasInputComponent) {
+        SetupInputComponent();
+    }
+
     if (!PhysicsHandle) { return; }
     if (PhysicsHandle->GrabbedComponent) {
         PhysicsHandle->SetTargetLocation(GetReachLineEnd());
@@ -45,8 +51,10 @@ void UGrabber::SetupInputComponent() {
 	if (InputComponent) {
         InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
         InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Release);
-    } else {
-        UE_LOG(LogTemp, Error, TEXT("Input component missing for %s"), *(GetOwner()->GetName()));
+        UE_LOG(LogTemp, Warning, TEXT("Input component added for %s"), *(GetOwner()->GetName()));
+        bHasInputComponent = true;
+    // } else {
+    //     UE_LOG(LogTemp, Error, TEXT("Input component missing for %s"), *(GetOwner()->GetName()));
     }
 }
 
