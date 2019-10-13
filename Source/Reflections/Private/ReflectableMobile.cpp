@@ -41,35 +41,35 @@ void AReflectableMobile::Tick(float DeltaSeconds) {
             GlobalStartLocation = GlobalTargetLocation;
             GlobalTargetLocation = SwapedLocation;
         }
-
-		if (!Mirror) return;
-
-		// Determine reflection location
-		FVector CubeLocation = GetActorLocation();
-		FVector MirrorLocation = Mirror->GetActorLocation();
-		FVector MirrorPlaneNormal = Mirror->GetActorForwardVector().GetSafeNormal();
-		FVector ReflectionLocation = (2 * MirrorLocation) - CubeLocation + (2 * MirrorPlaneNormal * FVector::DotProduct((CubeLocation - MirrorLocation), MirrorPlaneNormal));
-		ReflectionLocation.Z = CubeLocation.Z;
-
-		// Determine reflected rotation
-		FRotator CubeRotation = GetActorRotation();
-		FRotator ReflectionRotation = FRotator(
-			CubeRotation.Pitch,
-			-CubeRotation.Yaw,
-			-CubeRotation.Roll
-		);
-
-		// Spawn reflection if it doesn't already exist
-		if (!Reflection) {
-			if (!ensure(ReflectionBlueprint)) return;
-			Reflection = GetWorld()->SpawnActor<AReflection>(ReflectionBlueprint, ReflectionLocation, ReflectionRotation);
-
-			if (!Object || !Reflection) return;
-			Reflection->SetStaticMesh(Object->GetStaticMesh(), Object->GetMaterial(0));
-		}
-
-		Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation, GetActorScale3D());
     }
+
+	if (!Mirror) return;
+
+	// Determine reflection location
+	FVector CubeLocation = GetActorLocation();
+	FVector MirrorLocation = Mirror->GetActorLocation();
+	FVector MirrorPlaneNormal = Mirror->GetActorForwardVector().GetSafeNormal();
+	FVector ReflectionLocation = (2 * MirrorLocation) - CubeLocation + (2 * MirrorPlaneNormal * FVector::DotProduct((CubeLocation - MirrorLocation), MirrorPlaneNormal));
+	ReflectionLocation.Z = CubeLocation.Z;
+
+	// Determine reflected rotation
+	FRotator CubeRotation = GetActorRotation();
+	FRotator ReflectionRotation = FRotator(
+		CubeRotation.Pitch,
+		-CubeRotation.Yaw,
+		-CubeRotation.Roll
+	);
+
+	// Spawn reflection if it doesn't already exist
+	if (!Reflection) {
+		if (!ensure(ReflectionBlueprint)) return;
+		Reflection = GetWorld()->SpawnActor<AReflection>(ReflectionBlueprint, ReflectionLocation, ReflectionRotation);
+
+		if (!Object || !Reflection) return;
+		Reflection->SetStaticMesh(Object->GetStaticMesh(), Object->GetMaterial(0));
+	}
+
+	Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation, GetActorScale3D());
 }
 
 void AReflectableMobile::Initialise(AMirror* MirrorToSet) {
