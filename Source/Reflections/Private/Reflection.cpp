@@ -35,8 +35,9 @@ void AReflection::SetStaticMesh(UStaticMesh* StaticMeshToSet, UMaterialInterface
 	StaticMeshComponent->SetMaterial(0, MaterialToSet);
 }
 
-void AReflection::SetLocationRotation(FVector Location, FRotator Rotation) {
+void AReflection::SetLocationRotation(FVector Location, FRotator Rotation, FVector Scale) {
 	SetActorLocation(Location);
 	SetActorRotation(Rotation);
+	SetActorScale3D(Scale);
 }
 

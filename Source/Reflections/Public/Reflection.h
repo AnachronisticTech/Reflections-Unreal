@@ -20,7 +20,7 @@ public:
 
 	void SetStaticMesh(UStaticMesh* StaticMeshToSet, UMaterialInterface* MaterialToSet);
 
-	void SetLocationRotation(FVector Location, FRotator Rotation);
+	void SetLocationRotation(FVector Location, FRotator Rotation, FVector Scale);
 
 protected:
 	// Called when the game starts or when spawned

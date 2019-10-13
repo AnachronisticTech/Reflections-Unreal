@@ -51,7 +51,7 @@ void AReflectable::Tick(float DeltaTime)
 		Reflection->SetStaticMesh(Object->GetStaticMesh(), Object->GetMaterial(0));
 	}
 
-	Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation);
+	Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation, GetActorScale3D());
 
 }
 
