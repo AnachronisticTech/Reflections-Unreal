@@ -3,20 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Reflectable.generated.h"
+#include "Engine/StaticMeshActor.h"
+#include "ReflectableMobile.generated.h"
 
 class AMirror;
 class AReflection;
 
 UCLASS()
-class REFLECTIONS_API AReflectable : public AActor
+class REFLECTIONS_API AReflectableMobile : public AStaticMeshActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AReflectable();
+	AReflectableMobile();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -37,5 +37,17 @@ private:
     TSubclassOf<AReflection> ReflectionBlueprint;
 
 	AReflection* Reflection;
+
+    UPROPERTY(EditAnywhere, Category = "Setup")
+    float Speed = 5; // cm/s
+
+    FVector GlobalStartLocation;
+    FVector GlobalTargetLocation;
+
+    UPROPERTY(EditAnywhere, Meta = (MakeEditWidget = true))
+    FVector TargetLocation;
+
+    UPROPERTY(EditAnywhere)
+    int32 ActiveTriggers = 1;
 
 };

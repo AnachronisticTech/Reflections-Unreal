@@ -1,29 +1,45 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Reflectable.h"
+#include "ReflectableMobile.h"
 #include "Reflection.h"
 #include "Mirror.h"
 
 // Sets default values
-AReflectable::AReflectable()
+AReflectableMobile::AReflectableMobile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-}
-
-// Called when the game starts or when spawned
-void AReflectable::BeginPlay()
-{
-	Super::BeginPlay();
 	Object = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(FName("StaticMesh")));
+    SetMobility(EComponentMobility::Movable);
 }
 
-// Called every frame
-void AReflectable::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+void AReflectableMobile::BeginPlay() {
+    Super::BeginPlay();
+    if (HasAuthority()) {
+        SetReplicates(true);
+        SetReplicateMovement(true);
+        GlobalStartLocation = GetActorLocation();
+        GlobalTargetLocation = GetTransform().TransformPosition(TargetLocation);
+    }
+}
+
+void AReflectableMobile::Tick(float DeltaSeconds) {
+    Super::Tick(DeltaSeconds);
+
+	// Move the platform
+    if (HasAuthority() && ActiveTriggers > 0) {
+        FVector Location = GetActorLocation();
+		FVector Direction = (GlobalTargetLocation - GlobalStartLocation).GetSafeNormal();
+		Location += Speed * DeltaSeconds * Direction;
+        SetActorLocation(Location);
+
+        if (FVector::Dist(Location, GlobalStartLocation) >= FVector::Dist(GlobalStartLocation, GlobalTargetLocation)) {
+            FVector SwapedLocation = GlobalStartLocation;
+            GlobalStartLocation = GlobalTargetLocation;
+            GlobalTargetLocation = SwapedLocation;
+        }
+    }
 
 	if (!Mirror) return;
 
@@ -52,9 +68,9 @@ void AReflectable::Tick(float DeltaTime)
 	}
 
 	Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation);
-
 }
 
-void AReflectable::Initialise(AMirror* MirrorToSet) {
+void AReflectableMobile::Initialise(AMirror* MirrorToSet) {
 	Mirror = MirrorToSet;
 }
+
