@@ -88,9 +88,6 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const {
     GetWorld()->LineTraceSingleByObjectType(LineTraceHit, GetReachLineStart(), GetReachLineEnd(), FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), CollisionQueryParams);
 
     AActor* ActorHit = LineTraceHit.GetActor();
-    if (ActorHit) {
-	    UE_LOG(LogTemp, Warning, TEXT("Actor hit: %s"), *(ActorHit->GetName()));
-    }
 
     return LineTraceHit;
 }

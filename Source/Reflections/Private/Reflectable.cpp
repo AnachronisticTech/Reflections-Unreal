@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ObjectCube.h"
-#include "Reflected_Cube.h"
+#include "Reflectable.h"
+#include "Reflection.h"
 #include "Mirror.h"
 
 // Sets default values
-AObjectCube::AObjectCube()
+AReflectable::AReflectable()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -14,14 +14,14 @@ AObjectCube::AObjectCube()
 }
 
 // Called when the game starts or when spawned
-void AObjectCube::BeginPlay()
+void AReflectable::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Object = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(FName("StaticMesh")));
 }
 
 // Called every frame
-void AObjectCube::Tick(float DeltaTime)
+void AReflectable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -45,16 +45,16 @@ void AObjectCube::Tick(float DeltaTime)
 	// Spawn reflection if it doesn't already exist
 	if (!Reflection) {
 		if (!ensure(ReflectionBlueprint)) return;
-		Reflection = GetWorld()->SpawnActor<AReflected_Cube>(ReflectionBlueprint, ReflectionLocation, ReflectionRotation);
+		Reflection = GetWorld()->SpawnActor<AReflection>(ReflectionBlueprint, ReflectionLocation, ReflectionRotation);
+
+		if (!Object || !Reflection) return;
+		Reflection->SetStaticMesh(Object->GetStaticMesh(), Object->GetMaterial(0));
 	}
 
-	Reflection->SetActorLocation(ReflectionLocation);
-	Reflection->SetActorRotation(ReflectionRotation);
-	// UE_LOG(LogTemp, Warning, TEXT("Reflected location: %s"), *ReflectionLocation.ToString());
+	Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation);
 
 }
 
-void AObjectCube::Initialise(AMirror* MirrorToSet) {
+void AReflectable::Initialise(AMirror* MirrorToSet) {
 	Mirror = MirrorToSet;
 }
-
