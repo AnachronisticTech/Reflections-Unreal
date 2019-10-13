@@ -19,6 +19,10 @@ AReflection::AReflection()
 void AReflection::BeginPlay()
 {
 	Super::BeginPlay();
+    if (HasAuthority()) {
+        SetReplicates(true);
+        SetReplicateMovement(true);
+    }
 }
 
 // Called every frame
@@ -36,8 +40,10 @@ void AReflection::SetStaticMesh(UStaticMesh* StaticMeshToSet, UMaterialInterface
 }
 
 void AReflection::SetLocationRotation(FVector Location, FRotator Rotation, FVector Scale) {
-	SetActorLocation(Location);
-	SetActorRotation(Rotation);
-	SetActorScale3D(Scale);
+	if (HasAuthority()) {
+		SetActorLocation(Location);
+		SetActorRotation(Rotation);
+		SetActorScale3D(Scale);
+	}
 }
 

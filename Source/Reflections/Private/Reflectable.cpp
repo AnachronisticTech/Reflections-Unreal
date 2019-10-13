@@ -4,6 +4,8 @@
 #include "Reflectable.h"
 #include "Reflection.h"
 #include "Mirror.h"
+#include "Engine/World.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 AReflectable::AReflectable()
@@ -17,6 +19,10 @@ AReflectable::AReflectable()
 void AReflectable::BeginPlay()
 {
 	Super::BeginPlay();
+    if (HasAuthority()) {
+        SetReplicates(true);
+        SetReplicateMovement(true);
+    }
 	Object = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(FName("StaticMesh")));
 }
 
@@ -51,8 +57,9 @@ void AReflectable::Tick(float DeltaTime)
 		Reflection->SetStaticMesh(Object->GetStaticMesh(), Object->GetMaterial(0));
 	}
 
-	Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation, GetActorScale3D());
-
+	if (HasAuthority()) {
+		Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation, GetActorScale3D());
+	}
 }
 
 void AReflectable::Initialise(AMirror* MirrorToSet) {

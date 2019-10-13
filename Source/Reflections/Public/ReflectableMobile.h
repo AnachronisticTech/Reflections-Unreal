@@ -24,6 +24,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Setup")
     void Initialise(AMirror* MirrorToSet);
 
+    void AddActiveTrigger();
+    
+    void RemoveActiveTrigger();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

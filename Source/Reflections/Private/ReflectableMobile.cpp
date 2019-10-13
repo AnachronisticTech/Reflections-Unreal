@@ -4,6 +4,8 @@
 #include "ReflectableMobile.h"
 #include "Reflection.h"
 #include "Mirror.h"
+#include "Engine/World.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 AReflectableMobile::AReflectableMobile()
@@ -72,5 +74,15 @@ void AReflectableMobile::Tick(float DeltaSeconds) {
 
 void AReflectableMobile::Initialise(AMirror* MirrorToSet) {
 	Mirror = MirrorToSet;
+}
+
+void AReflectableMobile::AddActiveTrigger() {
+    ActiveTriggers += 1;
+}
+
+void AReflectableMobile::RemoveActiveTrigger() {
+    if (ActiveTriggers > 0) {
+        ActiveTriggers -= 1;
+    }
 }
 
