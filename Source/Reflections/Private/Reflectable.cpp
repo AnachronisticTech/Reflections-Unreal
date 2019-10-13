@@ -19,10 +19,8 @@ AReflectable::AReflectable()
 void AReflectable::BeginPlay()
 {
 	Super::BeginPlay();
-    if (HasAuthority()) {
-        SetReplicates(true);
-        SetReplicateMovement(true);
-    }
+	SetReplicates(true);
+	SetReplicateMovement(true);
 	Object = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(FName("StaticMesh")));
 }
 
@@ -57,9 +55,7 @@ void AReflectable::Tick(float DeltaTime)
 		Reflection->SetStaticMesh(Object->GetStaticMesh(), Object->GetMaterial(0));
 	}
 
-	if (HasAuthority()) {
-		Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation, GetActorScale3D());
-	}
+	Reflection->SetLocationRotation(ReflectionLocation, ReflectionRotation, GetActorScale3D());
 }
 
 void AReflectable::Initialise(AMirror* MirrorToSet) {
