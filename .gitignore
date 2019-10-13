@@ -6,6 +6,9 @@
 # Starter Content
 Content/StarterContent/*
 
+# Asset packs
+Content/GoodSky/*
+
 # Visual Studio 2015 user specific files
 .vs/
 
