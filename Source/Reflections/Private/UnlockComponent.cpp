@@ -36,8 +36,6 @@ void UUnlockComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	if (GetTotalNumberOfPlayersOnPlate() >= NumberOfPlayersToUnlock) {
         OnUnlock.Broadcast();
-    // } else {
-    //     OnClose.Broadcast();
     }
 }
 
@@ -48,9 +46,7 @@ int32 UUnlockComponent::GetTotalNumberOfPlayersOnPlate() {
     PressurePlate->GetOverlappingActors(ActorsOnPlate, AThirdPersonCharacter::StaticClass());
 
     for (const auto* Actor : ActorsOnPlate) {
-        // TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		TotalPlayers += 1;
-		UE_LOG(LogTemp, Warning, TEXT("Actor on plate: %s"), *Actor->GetName());
     }
 
     return TotalPlayers;
