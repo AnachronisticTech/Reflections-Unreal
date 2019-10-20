@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "Components/InputComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -51,10 +52,7 @@ void UGrabber::SetupInputComponent() {
 	if (InputComponent) {
         InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
         InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Release);
-        UE_LOG(LogTemp, Warning, TEXT("Input component added for %s"), *(GetOwner()->GetName()));
         bHasInputComponent = true;
-    // } else {
-    //     UE_LOG(LogTemp, Error, TEXT("Input component missing for %s"), *(GetOwner()->GetName()));
     }
 }
 
@@ -74,20 +72,18 @@ void UGrabber::Release() {
 }
 
 FVector UGrabber::GetReachLineStart() const {
-    FVector PlayerViewPointLocation;
-    FRotator PlayerViewPointRotation;
-    GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
-    
-    return PlayerViewPointLocation;
+    auto PlayerLocation = GetOwner()->GetActorLocation();
+    auto PlayerCamera = GetOwner()->FindComponentByClass<UCameraComponent>()->GetComponentLocation();
+    return FVector(PlayerLocation.X, PlayerLocation.Y, PlayerCamera.Z);
 }
 
 FVector UGrabber::GetReachLineEnd() const {
-    FVector PlayerViewPointLocation;
-    FRotator PlayerViewPointRotation;
-    GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
-    
-    FVector LineTraceDirection = PlayerViewPointRotation.Vector() * Reach;
-    return PlayerViewPointLocation + LineTraceDirection;
+    FVector PlayerLocation = GetOwner()->GetActorLocation();
+    auto PlayerCamera = GetOwner()->FindComponentByClass<UCameraComponent>();
+    FVector PlayerViewLocation = FVector(PlayerLocation.X, PlayerLocation.Y, PlayerLocation.Z + 60);
+    FVector PlayerRotation = PlayerCamera->GetForwardVector().GetSafeNormal();
+    FVector LineTraceDirection = PlayerRotation * Reach;
+    return PlayerViewLocation + LineTraceDirection;
 }
 
 FHitResult UGrabber::GetFirstPhysicsBodyInReach() const {
